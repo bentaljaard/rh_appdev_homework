@@ -14,3 +14,19 @@ echo "Setting up Sonarqube in project $GUID-sonarqube"
 # oc new-app -f ../templates/sonarqube.yaml --param .....
 
 # To be Implemented by Student
+################################################################
+
+# Ensure that we are creating the objects in the correct project
+oc project ${GUID}-sonarqube
+
+# Call template to provision nexus objects
+
+##TODO: Add more parameters
+
+oc new-app -f ../templates/sonarqube.yaml -p GUID=${GUID} #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
+
+echo "************************"
+echo "Nexus setup complete"
+echo "************************"
+
+exit 0

@@ -9,22 +9,23 @@ parameters:
   required: true
 - name: MEM_REQUESTS
   description: Requested memory for pod
-  required: true
+  required: false
   value: 1Gi
 - name: MEM_LIMITS
   description: Limit for pod memory
+  required: false
   value: 2Gi
 - name: CPU_REQUESTS
   description: Requested CPU for pod
-  required: true
+  required: false
   value: 500m
 - name: CPU_LIMITS
   description: Limit for pod CPU
-  required: true
+  required: false
   value: 1000m
 - name: VOLUME_CAPACITY
   description: Capacity of persistent volume
-  required: true
+  required: false
   value: 2G
 - name: CUSTOM_NEXUS_HOSTNAME
   description: Set a custom hostname for Nexus route
@@ -224,12 +225,6 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    annotations:
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-    creationTimestamp: null
-    finalizers:
-    - kubernetes.io/pvc-protection
     name: pvc-${GUID}-nexus
   spec:
     accessModes:
@@ -237,8 +232,6 @@ objects:
     resources:
       requests:
         storage: ${VOLUME_CAPACITY}
-    volumeName: pv0096
-  status: {}
 - apiVersion: v1
   kind: ImageStream
   metadata:

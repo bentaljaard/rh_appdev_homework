@@ -32,7 +32,7 @@ echo "Setting up Nexus in project $GUID-nexus"
 
 ##################################################################
 
-#TODO: Add parameters to template
+
 
 # Ensure that we are creating the objects in the correct project
 oc project ${GUID}-nexus

@@ -29,3 +29,40 @@ echo "Setting up Nexus in project $GUID-nexus"
 # oc new-app -f ../templates/nexus.yaml --param .....
 
 # To be Implemented by Student
+
+##################################################################
+
+#TODO: Add parameters to template
+
+# Ensure that we are creating the objects in the correct project
+oc project ${GUID}-nexus
+
+# Call template to provision nexus objects
+oc new-app -f ../templates/nexus3.yaml -p GUID=${GUID} -p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
+
+# Wait for nexus to start before we configure it
+while : ; do
+  echo "Checking if Nexus is Ready..."
+  oc get pod -n ${GUID}-nexus|grep -v deploy|grep "1/1"
+  [[ "$?" == "1" ]] || break
+  echo "...no. Sleeping 10 seconds."
+  sleep 10
+done
+
+#Make sure that route has started routing traffic, so sleep a little longer
+sleep 5
+
+# Run configuration script to configure redhat maven repos, create release repo, configure proxy for maven, setup docker registry repo
+curl -o config_nexus_tmp.sh -s https://raw.githubusercontent.com/bentaljaard/rh_appdev_homework/master/Infrastructure/bin/config_nexus3.sh
+chmod +x config_nexus_tmp.sh
+./config_nexus_tmp.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}')
+rm config_nexus_tmp.sh
+
+echo "************************"
+echo "Nexus setup complete"
+echo "************************"
+
+exit 0
+
+
+

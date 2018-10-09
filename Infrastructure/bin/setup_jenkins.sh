@@ -27,3 +27,14 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 # * CLUSTER: the base url of the cluster used (e.g. na39.openshift.opentlc.com)
 
 # To be Implemented by Student
+
+
+# Provision jenkins from template
+# Ensure that we are creating the objects in the correct project
+oc project ${GUID}-jenkins
+
+# Call template to provision nexus objects
+oc new-app -f ../templates/jenkins.yaml \
+	-p GUID=${GUID} -p REPO=${REPO} -p CLUSTER=${CLUSTER} \
+	-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=4G \
+	-p CPU_REQUESTS=1000m -p CPU_LIMITS=2000m

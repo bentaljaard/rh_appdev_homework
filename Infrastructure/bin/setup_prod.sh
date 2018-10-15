@@ -25,7 +25,7 @@ oc policy add-role-to-group system:image-puller system:serviceaccounts:${GUID}-p
 oc policy add-role-to-user view --serviceaccount=default
 
 # Provision mongodb statefulset 
-oc new-app -f mongodb_statefulset.yaml -p GUID=bft \
+oc new-app -f ../templates/mongodb_statefulset.yaml -p GUID=bft \
 	-p REPLICAS=3 -p MONGO_DATABASE=parks -p MONGO_USER=mongodb \
 	-p VOLUME_CAPACITY=2G -p CPU_LIMITS=1000m -p MEM_LIMITS=1Gi
 
@@ -33,7 +33,7 @@ oc new-app -f mongodb_statefulset.yaml -p GUID=bft \
 # MLBParks #
 
 # Setup Green Deployment (Default)
-oc new-app ${GUID}-parks-prod/mlb-parks:0.0-0 --name=mlb-parks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/mlb-parks:0.0-0 --name=mlb-parks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/mlb-parks-green --remove-all -n ${GUID}-parks-prod
 
 # Set environment variables for db connection
@@ -54,7 +54,7 @@ oc expose dc mlb-parks-green --port 8080 -n ${GUID}-parks-prod -l type=parksmap-
 
 
 # Setup Blue Deployment
-oc new-app ${GUID}-parks-prod/mlb-parks:0.0-0 --name=mlb-parks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/mlb-parks:0.0-0 --name=mlb-parks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/mlb-parks-blue --remove-all -n ${GUID}-parks-prod
 
 # Set environment variables for db connection
@@ -78,7 +78,7 @@ oc expose dc mlb-parks-blue --port 8080 -n ${GUID}-parks-prod
 # NationalParks #
 
 # Setup Green Deployment (Default)
-oc new-app ${GUID}-parks-prod/national-parks:0.0-0 --name=national-parks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/national-parks:0.0-0 --name=national-parks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/national-parks-green --remove-all -n ${GUID}-parks-prod
 
 # Set environment variables for db connection
@@ -99,7 +99,7 @@ oc expose dc national-parks-green --port 8080 -n ${GUID}-parks-prod -l type=park
 
 
 # Setup Blue Deployment
-oc new-app ${GUID}-parks-prod/national-parks:0.0-0 --name=national-parks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/national-parks:0.0-0 --name=national-parks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc set triggers dc/national-parks-blue --remove-all -n ${GUID}-parks-prod
 
 # Set environment variables for db connection

@@ -41,7 +41,7 @@ podTemplate(
       def prodTag = version
 
       sh 'cp ../nexus_settings.xml .'
-      replace(source: "nexus_settings.xml", toSearch: "GUID", replacement: "${GUID}")
+      sh 'sed -i s/GUID/'${GUID}'/g ./nexus_settings.xml'
 
       stage('Build Code Artifacts') {
         echo "Building version ${version}"
@@ -60,10 +60,7 @@ podTemplate(
 
 // Convenience Functions to read variables from the pom.xml
 // Do not change anything below this line.
-def replace = { 
-  File source, String toSearch, String replacement ->
-  source.write(source.text.replaceAll(toSearch, replacement))
-}
+
 def getVersionFromPom(pom) {
   def matcher = readFile(pom) =~ '<version>(.+)</version>'
   matcher ? matcher[0][1] : null

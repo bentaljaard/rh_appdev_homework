@@ -58,21 +58,23 @@ podTemplate(
       stage('Code Analysis') {
         echo "Running Code Analysis"
         sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local:9000 -Dsonar.projectVersion=${devTag}"
-
+        //sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-${GUID}-sonarqube.${CLUSTER} -Dsonar.projectVersion=${devTag}"
       }
       // Publish the built war file to Nexus
       stage('Publish to Nexus') {
         echo "Publish to Nexus"
         sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases"
+        //sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3-${GUID}-nexus.${CLUSTER}/repository/releases"
       }
 
       // Build the OpenShift Image in OpenShift and tag it.
-//      stage('Build and Tag OpenShift Image') {
-//        echo "Building OpenShift container image mlb-parks:${devTag}"
-//        sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3-${GUID}-nexus.${CLUSTER}/repository/releases/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war -n bft-tasks-dev"
-//        openshiftVerifyBuild apiURL: '', authToken: '', bldCfg: 'tasks', checkForTriggeredDeployments: 'false', namespace: 'bft-tasks-dev', verbose: 'false', waitTime: ''
-//        openshiftTag alias: 'false', destStream: 'tasks', destTag: devTag, destinationNamespace: 'bft-tasks-dev', namespace: 'bft-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
-//      }
+      stage('Build and Tag OpenShift Image') {
+        echo "Building OpenShift container image mlb-parks:${devTag}"
+        //sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3-${GUID}-nexus.${CLUSTER}/repository/releases/com/openshift/evg/roadshow/mlbparks/${version}/mlbparks-${version}.war -n bft-parks-dev"
+        sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3.${GUID}-nexus.svc.cluster.local/repository/releases/com/openshift/evg/roadshow/mlbparks/${version}/mlbparks-${version}.war -n bft-parks-dev"
+        openshiftVerifyBuild bldCfg: 'mlb-parks', checkForTriggeredDeployments: 'false', namespace: 'bft-parks-dev', verbose: 'false'
+        openshiftTag alias: 'false', destStream: 'mlb-parks', destTag: devTag, destinationNamespace: 'bft-parks-dev', namespace: 'bft-parks-dev', srcStream: 'mlb-parks', srcTag: 'latest', verbose: 'false'
+      }
     }
 
 

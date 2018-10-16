@@ -43,11 +43,15 @@ podTemplate(
       sh 'cp ../nexus_settings.xml .'
       ant.replace(file: "nexus_settings.xml", token: "GUID", value: ${GUID})
 
-      stage('Build Code Artifacts') {
+
+        
+    }
+
+    stage('Build Code Artifacts') {
+      dir('MLBParks'){
         echo "Building version ${version}"
         sh "${mvnCmd} clean install -DskipTests=true"
       }
-        
     }
 
 

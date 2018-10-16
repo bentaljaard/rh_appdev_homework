@@ -18,3 +18,21 @@ echo "Resetting Parks Production Environment in project ${GUID}-parks-prod to Gr
 # rollout followed by a Green rollout.
 
 # To be Implemented by Student
+
+
+# Switch MLBParks to green version
+# Remove blue version backend label
+oc label svc/mlb-parks-blue type- -n ${GUID}-parks-prod
+# Add green version backend label
+oc label svc/mlb-parks-green type=parks-backend -n ${GUID}-parks-prod
+
+
+# Switch National Parks to green version
+# Remove blue version backend label
+oc label svc/national-parks-blue type- -n ${GUID}-parks-prod
+# Add green version backend label
+oc label svc/national-parks-green type=parks-backend -n ${GUID}-parks-prod
+
+
+# Switch Parks Map to green version
+oc patch route parks-map -n ${GUID}-parks-prod -p '{"spec":{"to":{"name":"parks-map-green"}}}'

@@ -30,7 +30,7 @@ oc new-app --template=mongodb-persistent --param=MONGODB_USER=${MONGODB_USER} \
 
 # Setup deployments for applications
 # MLBParks #
-oc new-build --binary=true --name="mlb-parks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
+oc new-build --binary=true --name="mlb-parks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev --allow-missing-imagestream-tags=true
 oc new-app ${GUID}-parks-dev/mlb-parks:0.0-0 --name=mlb-parks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 oc set triggers dc/mlb-parks --remove-all -n ${GUID}-parks-dev
 oc set env dc/mlb-parks DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=${MONGODB_USER} DB_PASSWORD=${MONGODB_PASSWORD} DB_NAME=${MONGODB_DATABASE}
@@ -48,7 +48,7 @@ oc expose dc mlb-parks --port 8080 -n ${GUID}-parks-dev -l type=parksmap-backend
 # MLBParks setup complete #
 
 # NationalParks #
-oc new-build --binary=true --name="national-parks" redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
+oc new-build --binary=true --name="national-parks" redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev --allow-missing-imagestream-tags=true
 oc new-app ${GUID}-parks-dev/national-parks:0.0-0 --name=national-parks --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 oc set triggers dc/national-parks --remove-all -n ${GUID}-parks-dev
 oc set env dc/national-parks DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=${MONGODB_USER} DB_PASSWORD=${MONGODB_PASSWORD} DB_NAME=${MONGODB_DATABASE}
@@ -66,7 +66,7 @@ oc expose dc national-parks --port 8080 -n ${GUID}-parks-dev -l type=parksmap-ba
 
 # ParksMap #
 oc policy add-role-to-user view --serviceaccount=default
-oc new-build --binary=true --name="parks-map" redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev
+oc new-build --binary=true --name="parks-map" redhat-openjdk18-openshift:1.2 -n ${GUID}-parks-dev --allow-missing-imagestream-tags=true
 oc new-app ${GUID}-parks-dev/parks-map:0.0-0 --name=parks-map --allow-missing-imagestream-tags=true -n ${GUID}-parks-dev
 oc set triggers dc/parks-map --remove-all -n ${GUID}-parks-dev
 oc create configmap parks-map-config --from-literal=APPNAME="ParksMap (Dev)"

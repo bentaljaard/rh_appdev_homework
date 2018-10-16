@@ -6,7 +6,7 @@ podTemplate(
   containers: [
     containerTemplate(
       name: "jnlp",
-      image: "172.30.1.1:5000/${GUID}-jenkins/jenkins-slave-appdev",
+      image: "docker-registry.default.svc:5000/${GUID}-jenkins/jenkins-slave-appdev",
       resourceRequestMemory: "1Gi",
       resourceLimitMemory: "2Gi"
     )
@@ -20,6 +20,30 @@ podTemplate(
     // You need to build the application in directory `MLBParks`.
     // Also copy "../nexus_settings.xml" to your build directory
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
+
+    def mvnCmd = "mvn -s ./nexus_settings.xml"
+
+    // Checkout Source Code
+    stage('Checkout Source') {
+      checkout scm
+    }
+
+    dir('MLBParks'){
+        echo pwd
+    }
+
+
+
+    // Extract version and other properties from the pom.xml
+    def groupId    = getGroupIdFromPom("pom.xml")
+    def artifactId = getArtifactIdFromPom("pom.xml")
+    def version    = getVersionFromPom("pom.xml")
+
+    // Set the tag for the development image: version + build number
+    def devTag  = "${version}-${env.BUILD_NUMBER}"
+    // Set the tag for the production image: version
+    def prodTag = version
+
  
   }
 }

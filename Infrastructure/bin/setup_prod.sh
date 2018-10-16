@@ -129,7 +129,7 @@ oc set probe dc/parks-map-green --liveness --failure-threshold 3 --initial-delay
 oc set probe dc/parks-map-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
 oc expose dc parks-map-green --port 8080 -n ${GUID}-parks-prod
-oc expose service parks-map-green
+oc expose service parks-map-green --name=parks-map
 
 
 oc new-app ${GUID}-parks-dev/parks-map:0.0-0 --name=parks-map-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod

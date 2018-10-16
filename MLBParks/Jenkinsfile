@@ -41,7 +41,7 @@ podTemplate(
       def prodTag = version
 
       sh 'cp ../nexus_settings.xml .'
-      replace(source: "nexus_settings.xml", toSearch: "GUID", replacement: ${GUID})
+      replace(source: "nexus_settings.xml", toSearch: "GUID", replacement: "${GUID}")
 
       stage('Build Code Artifacts') {
         echo "Building version ${version}"

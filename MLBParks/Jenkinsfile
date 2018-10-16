@@ -41,7 +41,7 @@ podTemplate(
       def prodTag = version
 
       sh 'cp ../nexus_settings.xml .'
-      sh 'sed -i s/GUID/'${GUID}'/g ./nexus_settings.xml'
+      sh 'sed -i s#GUID#'${GUID}'#g ./nexus_settings.xml'
 
       stage('Build Code Artifacts') {
         echo "Building version ${version}"

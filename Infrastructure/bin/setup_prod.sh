@@ -31,112 +31,119 @@ oc new-app -f ../templates/mongodb_statefulset.yaml -p GUID=bft \
 
 # Setup deployments for applications
 # MLBParks #
+APP=mlbparks
+PROJECT=${GUID}-parks-prod
 
 # Setup Green Deployment (Default)
-oc new-app ${GUID}-parks-dev/mlb-parks:0.0-0 --name=mlb-parks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-oc set triggers dc/mlb-parks-green --remove-all -n ${GUID}-parks-prod
+APPNAME="MLB Parks (Green)"
 
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 # Set environment variables for db connection
-oc set env dc/mlb-parks-green DB_HOST=mongodb DB_PORT=27017
-oc set env --from=secret/mongodb dc/mlb-parks-green
+oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017
+oc set env --from=secret/mongodb dc/${APP}-green
 
-oc create configmap mlb-parks-config-green --from-literal=APPNAME="MLB Parks (Green)"
-oc set env --from=configmap/mlb-parks-config-green dc/mlb-parks-green
+oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}"
+oc set env --from=configmap/${APP}-config-green dc/${APP}-green
 
-oc set probe dc/mlb-parks-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/mlb-parks-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc set probe dc/${APP}-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-# //TODO: What to do with migration???
-# Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
-oc set deployment-hook dc/mlb-parks-green --post -- sh "curl -i -X GET http://mlb-parks.${GUID}-parks-dev.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-green --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
 
-oc expose dc mlb-parks-green --port 8080 -n ${GUID}-parks-prod -l type=parksmap-backend
+oc expose dc ${APP}-green --port 8080 -n ${PROJECT} -l type=parksmap-backend
 
 
 # Setup Blue Deployment
-oc new-app ${GUID}-parks-dev/mlb-parks:0.0-0 --name=mlb-parks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-oc set triggers dc/mlb-parks-blue --remove-all -n ${GUID}-parks-prod
+APPNAME="MLB Parks (Blue)"
+
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 
 # Set environment variables for db connection
-oc set env dc/mlb-parks-blue DB_HOST=mongodb DB_PORT=27017
-oc set env --from=secret/mongodb dc/mlb-parks-blue
+oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017
+oc set env --from=secret/mongodb dc/${APP}-blue
 
-oc create configmap mlb-parks-config-blue --from-literal=APPNAME="MLB Parks (Blue)"
-oc set env --from=configmap/mlb-parks-config-blue dc/mlb-parks-blue
+oc create configmap ${APP}-config-blue --from-literal=APPNAME="$APPNAME"
+oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue
 
-oc set probe dc/mlb-parks-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/mlb-parks-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc set probe dc/${APP}-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP}-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-#TODO: What to do with migration???
-# Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
-oc set deployment-hook dc/mlb-parks-blue --post -- sh "curl -i -X GET http://mlb-parks.${GUID}-parks-dev.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-blue --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
-oc expose dc mlb-parks-blue --port 8080 -n ${GUID}-parks-prod
+oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
 
 
 # NationalParks #
+APP=nationalparks
+PROJECT=${GUID}-parks-prod
 
 # Setup Green Deployment (Default)
-oc new-app ${GUID}-parks-dev/national-parks:0.0-0 --name=national-parks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-oc set triggers dc/national-parks-green --remove-all -n ${GUID}-parks-prod
-
+APPNAME="National Parks (Green)"
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 # Set environment variables for db connection
-oc set env dc/national-parks-green DB_HOST=mongodb DB_PORT=27017
-oc set env --from=secret/mongodb dc/national-parks-green
+oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017
+oc set env --from=secret/mongodb dc/${APP}-green
 
-oc create configmap national-parks-config-green --from-literal=APPNAME="National Parks (Green)"
-oc set env --from=configmap/national-parks-config-green dc/national-parks-green
+oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}"
+oc set env --from=configmap/${APP}-config-green dc/${APP}-green
 
-oc set probe dc/national-parks-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/national-parks-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc set probe dc/${APP}-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-# //TODO: What to do with migration???
-# Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
-oc set deployment-hook dc/national-parks-green --post -- sh "curl -i -X GET http://national-parks.${GUID}-parks-dev.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-green --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
 
-oc expose dc national-parks-green --port 8080 -n ${GUID}-parks-prod -l type=parksmap-backend
+oc expose dc ${APP}-green --port 8080 -n ${PROJECT} -l type=parksmap-backend
 
 
 # Setup Blue Deployment
-oc new-app ${GUID}-parks-dev/national-parks:0.0-0 --name=national-parks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-oc set triggers dc/national-parks-blue --remove-all -n ${GUID}-parks-prod
+APPNAME="National Parks (Blue)"
+
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 
 # Set environment variables for db connection
-oc set env dc/national-parks-blue DB_HOST=mongodb DB_PORT=27017
-oc set env --from=secret/mongodb dc/national-parks-blue
+oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017
+oc set env --from=secret/mongodb dc/${APP}-blue
 
-oc create configmap national-parks-config-blue --from-literal=APPNAME="National Parks (Blue)"
-oc set env --from=configmap/national-parks-config-blue dc/national-parks-blue
+oc create configmap ${APP}-config-blue --from-literal=APPNAME="$APPNAME"
+oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue
 
-oc set probe dc/national-parks-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/national-parks-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc set probe dc/${APP}-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP}-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-# //TODO: What to do with migration???
-# Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
-oc set deployment-hook dc/national-parks-blue --post -- sh "curl -i -X GET http://national-parks.${GUID}-parks-dev.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-blue --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
-oc expose dc national-parks-blue --port 8080 -n ${GUID}-parks-prod
+oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
+
 
 # ParksMap #
+APP=parksmap
+PROJECT=${GUID}-parks-prod
 
-oc new-app ${GUID}-parks-dev/parks-map:0.0-0 --name=parks-map-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-oc set triggers dc/parks-map-green --remove-all -n ${GUID}-parks-prod
-oc create configmap parks-map-config-green --from-literal=APPNAME="ParksMap (Green)"
-oc set env --from=configmap/parks-map-config-green dc/parks-map-green
-oc set probe dc/parks-map-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/parks-map-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+APPNAME="ParksMap (Green)"
 
-oc expose dc parks-map-green --port 8080 -n ${GUID}-parks-prod
-oc expose service parks-map-green --name=parks-map
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
+oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}"
+oc set env --from=configmap/${APP}-config-green dc/${APP}-green
+oc set probe dc/${APP}-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
+oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
+oc expose service ${APP}-green --name=${APP}
 
-oc new-app ${GUID}-parks-dev/parks-map:0.0-0 --name=parks-map-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
-oc set triggers dc/parks-map-blue --remove-all -n ${GUID}-parks-prod
-oc create configmap parks-map-config-blue --from-literal=APPNAME="ParksMap (Blue)"
-oc set env --from=configmap/parks-map-config-blue dc/parks-map-blue
-oc set probe dc/parks-map-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/parks-map-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+APPNAME="ParksMap (Blue)"
 
-oc expose dc parks-map-blue --port 8080 -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
+oc create configmap ${APP}-config-blue --from-literal=APPNAME="${APPNAME}"
+oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue
+oc set probe dc/${APP}-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP}-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+
+oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}

@@ -332,16 +332,8 @@ objects:
           value: ${GUID}
         jenkinsfilePath: Jenkinsfile
       type: JenkinsPipeline
-    triggers:
-    - github:
-        secret: hnGvMPx6a6bFG8E5YGTB
-      type: GitHub
-    - generic:
-        secret: 9tzl8hW23YmqgJy-UqgF
-      type: Generic
-    - type: ConfigChange
-  status:
-    lastVersion: 0
+    triggers: {}
+ 
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -372,16 +364,8 @@ objects:
           value: ${GUID}
         jenkinsfilePath: Jenkinsfile
       type: JenkinsPipeline
-    triggers:
-    - github:
-        secret: g7rMlqcYohV7sObm_w7Q
-      type: GitHub
-    - generic:
-        secret: 6Wki0bsxnJxduA6lt6lU
-      type: Generic
-    - type: ConfigChange
-  status:
-    lastVersion: 0
+    triggers: {}
+ 
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -412,16 +396,8 @@ objects:
           value: ${GUID}
         jenkinsfilePath: Jenkinsfile
       type: JenkinsPipeline
-    triggers:
-    - github:
-        secret: e8EE2z9-OtbIsN16C7ih
-      type: GitHub
-    - generic:
-        secret: ZOPkvjwtoISho0RzQyht
-      type: Generic
-    - type: ConfigChange
-  status:
-    lastVersion: 0
+    triggers: {}
+
 - apiVersion: v1
   kind: ImageStream
   metadata:

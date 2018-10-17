@@ -70,10 +70,10 @@ podTemplate(
       // Build the OpenShift Image in OpenShift and tag it.
       stage('Build and Tag OpenShift Image') {
         echo "Building OpenShift container image mlb-parks:${devTag}"
-        sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3-${GUID}-nexus.apps.${CLUSTER}/repository/releases/com/openshift/evg/roadshow/mlbparks/${version}/mlbparks-${version}.war -n bft-parks-dev"
-        //sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/com/openshift/evg/roadshow/mlbparks/${version}/mlbparks-${version}.war -n bft-parks-dev"
-        openshiftVerifyBuild bldCfg: 'mlb-parks', checkForTriggeredDeployments: 'false', namespace: 'bft-parks-dev', verbose: 'false'
-        openshiftTag alias: 'false', destStream: 'mlb-parks', destTag: devTag, destinationNamespace: 'bft-parks-dev', namespace: 'bft-parks-dev', srcStream: 'mlb-parks', srcTag: 'latest', verbose: 'false'
+        sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3-${GUID}-nexus.apps.${CLUSTER}/repository/releases/com/openshift/evg/roadshow/mlbparks/${version}/mlbparks-${version}.war -n ${GUID}-parks-dev"
+        //sh "oc start-build mlb-parks --follow=true --from-file=http://nexus3.${GUID}-nexus.svc.cluster.local:8081/repository/releases/com/openshift/evg/roadshow/mlbparks/${version}/mlbparks-${version}.war -n ${GUID}-parks-dev"
+        openshiftVerifyBuild bldCfg: 'mlb-parks', checkForTriggeredDeployments: 'false', namespace: '${GUID}-parks-dev', verbose: 'false'
+        openshiftTag alias: 'false', destStream: 'mlb-parks', destTag: devTag, destinationNamespace: '${GUID}-parks-dev', namespace: '${GUID}-parks-dev', srcStream: 'mlb-parks', srcTag: 'latest', verbose: 'false'
       }
 
 

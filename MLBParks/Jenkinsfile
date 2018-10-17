@@ -48,18 +48,23 @@ podTemplate(
         sh "${mvnCmd} clean install -DskipTests=true"
       }
 
-      // Using Maven run the unit tests
-      stage('Unit Tests') {
-        echo "Running Unit Tests"
-        sh "${mvnCmd} test"
+      stage('Run Code Tests'){
+        parallel: {
+            // Using Maven run the unit tests
+            stage('Unit Tests') {
+              echo "Running Unit Tests"
+              sh "${mvnCmd} test"
+            }
+              
+            // Using Maven call SonarQube for Code Analysis
+            stage('Code Analysis') {
+              echo "Running Code Analysis"
+              //sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local:9000 -Dsonar.projectVersion=${devTag}"
+              sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-${GUID}-sonarqube.apps.${CLUSTER} -Dsonar.projectVersion=${devTag}"
+            }
+        }
       }
-        
-      // Using Maven call SonarQube for Code Analysis
-      stage('Code Analysis') {
-        echo "Running Code Analysis"
-        //sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube.${GUID}-sonarqube.svc.cluster.local:9000 -Dsonar.projectVersion=${devTag}"
-        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-${GUID}-sonarqube.apps.${CLUSTER} -Dsonar.projectVersion=${devTag}"
-      }
+      
       // Publish the built war file to Nexus
       stage('Publish to Nexus') {
         echo "Publish to Nexus"

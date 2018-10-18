@@ -49,7 +49,6 @@ podTemplate(
       }
 
       stage('Run Code Tests'){
-        failFast true
         parallel {
             // Using Maven run the unit tests
             stage('Unit Tests') {

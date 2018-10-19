@@ -85,13 +85,6 @@ podTemplate(
 
       }
 
-      // Run Integration Tests in the Development Environment.
-      stage('Integration Tests') {
-        echo "Running Integration Tests"
-        sleep 20
-       // sh "curl -i -X GET http://parksmap.${GUID}-parks-dev.svc.cluster.local:8080/ws/info/"
-
-      }
 
       // Copy Image to Nexus Docker Registry
       stage('Copy Image to Nexus Docker Registry') {

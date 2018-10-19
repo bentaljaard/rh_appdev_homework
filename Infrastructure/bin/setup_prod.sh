@@ -40,7 +40,7 @@ APPNAME="MLB Parks (Green)"
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 # Set environment variables for db connection
-oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017
+oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0
 oc set env --from=secret/mongodb dc/${APP}-green
 
 oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}"
@@ -62,7 +62,7 @@ oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-ima
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 
 # Set environment variables for db connection
-oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017
+oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0
 oc set env --from=secret/mongodb dc/${APP}-blue
 
 oc create configmap ${APP}-config-blue --from-literal=APPNAME="$APPNAME"
@@ -87,7 +87,7 @@ APPNAME="National Parks (Green)"
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 # Set environment variables for db connection
-oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017
+oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0
 oc set env --from=secret/mongodb dc/${APP}-green
 
 oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}"
@@ -110,7 +110,7 @@ oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-ima
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 
 # Set environment variables for db connection
-oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017
+oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0
 oc set env --from=secret/mongodb dc/${APP}-blue
 
 oc create configmap ${APP}-config-blue --from-literal=APPNAME="$APPNAME"

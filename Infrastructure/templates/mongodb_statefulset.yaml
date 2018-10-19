@@ -80,7 +80,7 @@ objects:
   stringData:
     DB_NAME: ${MONGO_DATABASE}
     DB_PASSWORD: ${MONGO_PASSWORD}
-    DB_USER: ${MONGO_USER}
+    DB_USERNAME: ${MONGO_USER}
     DB_ADMIN_PASSWORD: ${MONGO_ADMIN_PASSWORD}
   kind: Secret
   metadata:
@@ -88,7 +88,7 @@ objects:
       openshift.io/generated-by: OpenShiftNewApp
       template.openshift.io/expose-database_name: '{.data[''DB_NAME'']}'
       template.openshift.io/expose-password: '{.data[''DB_PASSWORD'']}'
-      template.openshift.io/expose-username: '{.data[''DB_USER'']}'
+      template.openshift.io/expose-username: '{.data[''DB_USERNAME'']}'
       template.openshift.io/expose-admin-password: '{.data[''DB_ADMIN_PASSWORD'']}'
     creationTimestamp: null
     labels:
@@ -130,7 +130,7 @@ objects:
               - name: MONGODB_USER
                 valueFrom:
                   secretKeyRef:
-                    key: DB_USER
+                    key: DB_USERNAME
                     name: mongodb
               - name: MONGODB_PASSWORD
                 valueFrom:

@@ -49,7 +49,7 @@ oc set env --from=configmap/${APP}-config-green dc/${APP}-green
 oc set probe dc/${APP}-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-oc set deployment-hook dc/${APP}-green --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-green --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
 
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
 oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
@@ -71,7 +71,7 @@ oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue
 oc set probe dc/${APP}-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-oc set deployment-hook dc/${APP}-blue --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-blue --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
@@ -96,7 +96,7 @@ oc set env --from=configmap/${APP}-config-green dc/${APP}-green
 oc set probe dc/${APP}-green --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-oc set deployment-hook dc/${APP}-green --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-green --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
 
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
 oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
@@ -119,7 +119,7 @@ oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue
 oc set probe dc/${APP}-blue --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-blue --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 
-oc set deployment-hook dc/${APP}-blue --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-blue --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}

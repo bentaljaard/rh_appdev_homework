@@ -89,18 +89,9 @@ podTemplate(
       // Run Integration Tests in the Development Environment.
       stage('Integration Tests') {
         echo "Running Integration Tests"
-        sleep 30
-        // Create a new task called "integration_test_1"
-        //echo "Creating task"
-        //sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X POST http://tasks.bft-tasks-dev.svc.cluster.local:8080/ws/tasks/integration_test_1"
-        
-        // Retrieve task with id "1"
-        //echo "Retrieving tasks"
-        //sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X GET http://tasks.bft-tasks-dev.svc.cluster.local:8080/ws/tasks/1"
-        
-        // Delete task with id "1"
-        //echo "Deleting tasks"
-        //sh "curl -i -u 'tasks:redhat1' -H 'Content-Length: 0' -X DELETE http://tasks.bft-tasks-dev.svc.cluster.local:8080/ws/tasks/1"
+        sleep 20
+        sh "curl -i -X GET http://mlbparks-${GUID}-parks-dev.apps.${CLUSTER}/ws/info/"
+
       }
 
       // Copy Image to Nexus Docker Registry
@@ -110,6 +101,43 @@ podTemplate(
 
         // Tag the built image with the production tag.
         openshiftTag alias: 'false', destStream: 'mlbparks', destTag: prodTag, destinationNamespace: '${GUID}-parks-dev', namespace: '${GUID}-parks-dev', srcStream: 'mlbparks', srcTag: devTag, verbose: 'false'
+      }
+
+      /////////////////////////////////
+
+      // Blue/Green Deployment into Production
+      // -------------------------------------
+      def destApp   = ""
+      def activeApp = ""
+
+      stage('Blue/Green Production Deployment') {
+        activeApp = sh(returnStdout: true, script: "oc get route mlbparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.to.name }'").trim()
+        if (activeApp == "mlbparks-green") {
+          destApp = "mlbparks-blue"
+        } else {
+          destApp = "mlbparks-green"
+        }
+        echo "Active Application:      " + activeApp
+        echo "Destination Application: " + destApp
+
+        // Update the Image on the Production Deployment Config
+        sh "oc set image dc/${destApp} ${destApp}=docker-registry.default.svc:5000/${GUID}-parks-dev/mlbparks:${prodTag} -n ${GUID}-parks-prod"
+
+        // Deploy the inactive application.
+        openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false'
+        openshiftVerifyDeployment depCfg: destApp, namespace: '${GUID}-parks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true'
+        openshiftVerifyService namespace: '${GUID}-parks-prod', svcName: destApp, verbose: 'false'
+      }
+
+      stage('Switch over to new Version') {
+        echo "Switching Production application to ${destApp}."
+
+        // Remove label from active service
+        sh 'oc label svc/' + activeApp + ' type- -n ${GUID}-parks-prod'
+        // Add label to destination service
+        sh 'oc label svc/' + destApp + ' type=parks-backend -n ${GUID}-parks-prod'
+
+        //sh 'oc patch route tasks -n bft-tasks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
       }
 
 

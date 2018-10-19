@@ -89,8 +89,8 @@ podTemplate(
       // Run Integration Tests in the Development Environment.
       stage('Integration Tests') {
         echo "Running Integration Tests"
-        sleep 30
-        sh "curl -i -X GET http://mlbparks-${GUID}-parks-dev.apps.${CLUSTER}/ws/info/"
+        sleep 20
+        sh "curl -i -X GET http://mlbparks.${GUID}-parks-dev.svc.cluster.local/ws/info/"
 
       }
 
@@ -112,7 +112,7 @@ podTemplate(
 
       stage('Blue/Green Production Deployment') {
         //activeApp = sh(returnStdout: true, script: "oc get route mlbparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.to.name }'").trim()
-        activeApp = sh(returnStdout: true, script: "oc get svc -l type=parksmap-backend,app=mlbparks -o jsonpath='{ .items[0].metadata.name }'").trim()
+        activeApp = sh(returnStdout: true, script: "oc get svc -l type=parksmap-backend,app=mlbparks -o jsonpath='{ .items[0].metadata.name }' -n ${GUID}-parks-prod").trim()
         if (activeApp == "mlbparks-green") {
           destApp = "mlbparks-blue"
         } else {

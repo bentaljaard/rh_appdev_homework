@@ -51,7 +51,8 @@ oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-s
 
 oc set deployment-hook dc/${APP}-green --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
 
-oc expose dc ${APP}-green --port 8080 -n ${PROJECT} -l type=parksmap-backend
+oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
+oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
 
 
 # Setup Blue Deployment
@@ -74,6 +75,7 @@ oc set deployment-hook dc/${APP}-blue --post -- sh "curl -i -X GET http://${APP}
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
+oc label svc ${APP} app=${APP} --overwrite
 
 
 # NationalParks #
@@ -96,7 +98,9 @@ oc set probe dc/${APP}-green --readiness --failure-threshold 3 --initial-delay-s
 
 oc set deployment-hook dc/${APP}-green --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
 
-oc expose dc ${APP}-green --port 8080 -n ${PROJECT} -l type=parksmap-backend
+oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
+oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
+
 
 
 # Setup Blue Deployment
@@ -119,6 +123,8 @@ oc set deployment-hook dc/${APP}-blue --post -- sh "curl -i -X GET http://${APP}
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
+oc label svc ${APP} app=${APP} --overwrite
+
 
 
 # ParksMap #

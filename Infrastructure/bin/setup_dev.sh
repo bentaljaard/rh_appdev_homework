@@ -46,7 +46,8 @@ oc set probe dc/${APP} --liveness --failure-threshold 3 --initial-delay-seconds 
 oc set probe dc/${APP} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 # Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
 oc set deployment-hook dc/${APP} --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
-oc expose dc ${APP} --port 8080 -n ${PROJECT} -l type=parksmap-backend
+oc expose dc ${APP} --port 8080 -n ${PROJECT}
+oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
 # MLBParks setup complete #
 
 # NationalParks #
@@ -65,7 +66,9 @@ oc set probe dc/${APP} --liveness --failure-threshold 3 --initial-delay-seconds 
 oc set probe dc/${APP} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 # Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
 oc set deployment-hook dc/${APP} --post -- sh "curl -i -X GET http://${APP}.${PROJECT}.svc.cluster.local:8080/ws/data/load/" 
-oc expose dc ${APP} --port 8080 -n ${PROJECT} -l type=parksmap-backend
+oc expose dc ${APP} --port 8080 -n ${PROJECT}
+oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
+
 # NationalParks setup complete#
 
 # ParksMap #

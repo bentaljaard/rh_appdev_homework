@@ -24,14 +24,14 @@ echo "Resetting Parks Production Environment in project ${GUID}-parks-prod to Gr
 # Remove blue version backend label
 oc label svc/mlbparks-blue type- -n ${GUID}-parks-prod
 # Add green version backend label
-oc label svc/mlbparks-green type=parksmap-backend -n ${GUID}-parks-prod
+oc label svc/mlbparks-green type=parksmap-backend -n ${GUID}-parks-prod --overwrite
 
 
 # Switch National Parks to green version
 # Remove blue version backend label
 oc label svc/nationalparks-blue type- -n ${GUID}-parks-prod
 # Add green version backend label
-oc label svc/nationalparks-green type=parksmap-backend -n ${GUID}-parks-prod
+oc label svc/nationalparks-green type=parksmap-backend -n ${GUID}-parks-prod --overwrite
 
 
 # Switch Parks Map to green version

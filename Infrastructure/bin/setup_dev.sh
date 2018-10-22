@@ -26,7 +26,8 @@ oc policy add-role-to-user edit system:serviceaccount:${GUID}-jenkins:jenkins -n
 # Setup mongoDB for parks backends
 oc new-app --template=mongodb-persistent --param=MONGODB_USER=${MONGODB_USER} \
 	--param=MONGODB_PASSWORD=${MONGODB_PASSWORD} \
-	--param=MONGODB_DATABASE=${MONGODB_DATABASE}
+	--param=MONGODB_DATABASE=${MONGODB_DATABASE} \
+	-n ${GUID}-parks-dev
 
 # Setup deployments for applications
 
@@ -39,16 +40,16 @@ BASEIMAGE=jboss-eap70-openshift:1.7
 oc new-build --binary=true --name="${APP}" ${BASEIMAGE} -n ${PROJECT}
 oc new-app ${PROJECT}/${APP}:0.0-0 --name=${APP} --allow-missing-imagestream-tags=true -n ${PROJECT}
 oc set triggers dc/${APP} --remove-all -n ${PROJECT}
-oc set env dc/${APP} DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=${MONGODB_USER} DB_PASSWORD=${MONGODB_PASSWORD} DB_NAME=${MONGODB_DATABASE}
-oc create configmap ${APP}-config --from-literal=APPNAME="${APPNAME}"
-oc set env --from=configmap/${APP}-config dc/${APP}
-oc set probe dc/${APP} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/${APP} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc set env dc/${APP} DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=${MONGODB_USER} DB_PASSWORD=${MONGODB_PASSWORD} DB_NAME=${MONGODB_DATABASE} -n ${PROJECT}
+oc create configmap ${APP}-config --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
+oc set env --from=configmap/${APP}-config dc/${APP} -n ${PROJECT}
+oc set probe dc/${APP} -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP} -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 # Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
 oc expose dc ${APP} --port 8080 -n ${PROJECT}
-oc set deployment-hook dc/${APP} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP} -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
+oc set deployment-hook dc/${APP} -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP} -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
 
-oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
+oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
 # MLBParks setup complete #
 
 # NationalParks #
@@ -60,16 +61,16 @@ BASEIMAGE=redhat-openjdk18-openshift:1.2
 oc new-build --binary=true --name="${APP}" ${BASEIMAGE} -n ${PROJECT}
 oc new-app ${PROJECT}/${APP}:0.0-0 --name=${APP} --allow-missing-imagestream-tags=true -n ${PROJECT}
 oc set triggers dc/${APP} --remove-all -n ${PROJECT}
-oc set env dc/${APP} DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=${MONGODB_USER} DB_PASSWORD=${MONGODB_PASSWORD} DB_NAME=${MONGODB_DATABASE}
-oc create configmap ${APP}-config --from-literal=APPNAME="${APPNAME}"
-oc set env --from=configmap/${APP}-config dc/${APP}
-oc set probe dc/${APP} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/${APP} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc set env dc/${APP} DB_HOST=mongodb DB_PORT=27017 DB_USERNAME=${MONGODB_USER} DB_PASSWORD=${MONGODB_PASSWORD} DB_NAME=${MONGODB_DATABASE} -n ${PROJECT}
+oc create configmap ${APP}-config --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
+oc set env --from=configmap/${APP}-config dc/${APP} -n ${PROJECT}
+oc set probe dc/${APP} -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP} -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 # Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
 oc expose dc ${APP} --port 8080 -n ${PROJECT}
-oc set deployment-hook dc/${APP} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP} -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
+oc set deployment-hook dc/${APP} -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP} -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
 
-oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite
+oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
 
 # NationalParks setup complete#
 
@@ -79,17 +80,17 @@ APPNAME="ParksMap (Dev)"
 PROJECT=${GUID}-parks-dev
 BASEIMAGE=redhat-openjdk18-openshift:1.2
 
-oc policy add-role-to-user view --serviceaccount=default
+oc policy add-role-to-user view --serviceaccount=default -n ${PROJECT}
 
 oc new-build --binary=true --name="${APP}" ${BASEIMAGE} -n ${PROJECT}
 oc new-app ${PROJECT}/${APP}:0.0-0 --name=${APP} --allow-missing-imagestream-tags=true -n ${PROJECT}
 oc set triggers dc/${APP} --remove-all -n ${PROJECT}
-oc create configmap ${APP}-config --from-literal=APPNAME="${APPNAME}"
-oc set env --from=configmap/${APP}-config dc/${APP}
-oc set probe dc/${APP} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
-oc set probe dc/${APP} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
+oc create configmap ${APP}-config --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
+oc set env --from=configmap/${APP}-config dc/${APP} -n ${PROJECT}
+oc set probe dc/${APP} -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
+oc set probe dc/${APP} -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 oc expose dc ${APP} --port 8080 -n ${PROJECT}
-oc expose service ${APP}
+oc expose service ${APP} -n ${PROJECT}
 # ParksMap setup complete#
 
 

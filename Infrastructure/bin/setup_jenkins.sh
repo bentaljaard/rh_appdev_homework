@@ -37,4 +37,4 @@ oc project ${GUID}-jenkins
 oc new-app -f Infrastructure/templates/jenkins.yaml \
 	-p GUID=${GUID} -p REPO=${REPO} -p CLUSTER=${CLUSTER} \
 	-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=4G \
-	-p CPU_REQUESTS=1000m -p CPU_LIMITS=2000m
+	-p CPU_REQUESTS=1000m -p CPU_LIMITS=2000m -n ${GUID}-jenkins

@@ -23,7 +23,7 @@ oc project ${GUID}-sonarqube
 
 ##TODO: Add more parameters
 
-oc new-app -f Infrastructure/templates/sonarqube.yaml -p GUID=${GUID} #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
+oc new-app -f Infrastructure/templates/sonarqube.yaml -p GUID=${GUID} -n ${GUID}-sonarqube #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
 
 echo "************************"
 echo "SonarQube setup complete"

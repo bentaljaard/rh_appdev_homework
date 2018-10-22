@@ -37,7 +37,7 @@ PROJECT=${GUID}-parks-prod
 # Setup Green Deployment (Default)
 APPNAME="MLB Parks (Green)"
 
-oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 # Set environment variables for db connection
 oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0 -n ${PROJECT}
@@ -60,7 +60,7 @@ oc label svc ${APP}-green type=parksmap-backend app=${APP} --overwrite -n ${PROJ
 # Setup Blue Deployment
 APPNAME="MLB Parks (Blue)"
 
-oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 
 # Set environment variables for db connection
@@ -88,7 +88,7 @@ PROJECT=${GUID}-parks-prod
 
 # Setup Green Deployment (Default)
 APPNAME="National Parks (Green)"
-oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 # Set environment variables for db connection
 oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0 -n ${PROJECT}
@@ -112,7 +112,7 @@ oc label svc ${APP}-green type=parksmap-backend app=${APP} --overwrite -n ${PROJ
 # Setup Blue Deployment
 APPNAME="National Parks (Blue)"
 
-oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 
 # Set environment variables for db connection
@@ -141,7 +141,7 @@ PROJECT=${GUID}-parks-prod
 
 APPNAME="ParksMap (Green)"
 
-oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
 oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-green dc/${APP}-green -n ${PROJECT}
@@ -153,7 +153,7 @@ oc expose service ${APP}-green --name=${APP} -n ${PROJECT}
 
 APPNAME="ParksMap (Blue)"
 
-oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true -n ${PROJECT}
+oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
 oc create configmap ${APP}-config-blue --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue -n ${PROJECT}

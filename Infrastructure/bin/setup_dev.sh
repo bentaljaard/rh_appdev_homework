@@ -47,6 +47,7 @@ oc set probe dc/${APP} -n ${PROJECT} --liveness --failure-threshold 3 --initial-
 oc set probe dc/${APP} -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 # Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
 oc expose dc ${APP} --port 8080 -n ${PROJECT}
+sleep 5
 oc set deployment-hook dc/${APP} -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP} -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
 
 oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
@@ -68,6 +69,7 @@ oc set probe dc/${APP} -n ${PROJECT} --liveness --failure-threshold 3 --initial-
 oc set probe dc/${APP} -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 # Wait for pod to be started and then call /ws/data/load/ as post deploy hook to populate the db
 oc expose dc ${APP} --port 8080 -n ${PROJECT}
+sleep 5
 oc set deployment-hook dc/${APP} -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP} -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
 
 oc label svc ${APP} type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}

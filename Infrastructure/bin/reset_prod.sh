@@ -36,3 +36,5 @@ oc label svc/nationalparks-green type=parksmap-backend -n ${GUID}-parks-prod --o
 
 # Switch Parks Map to green version
 oc patch route parksmap -n ${GUID}-parks-prod -p '{"spec":{"to":{"name":"parksmap-green"}}}'
+
+exit 0

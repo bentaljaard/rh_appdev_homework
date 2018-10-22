@@ -25,6 +25,14 @@ oc project ${GUID}-sonarqube
 
 oc new-app -f Infrastructure/templates/sonarqube.yaml -p GUID=${GUID} -n ${GUID}-sonarqube #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
 
+while : ; do
+  echo "Checking if Jenkins is Ready..."
+  oc get pod -n ${GUID}-sonarqube|grep -v deploy|grep -v postgresql|grep "1/1"
+  [[ "$?" == "1" ]] || break
+  echo "...no. Sleeping 10 seconds."
+  sleep 10
+done
+
 echo "************************"
 echo "SonarQube setup complete"
 echo "************************"

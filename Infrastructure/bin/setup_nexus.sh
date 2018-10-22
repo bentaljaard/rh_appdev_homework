@@ -38,7 +38,7 @@ echo "Setting up Nexus in project $GUID-nexus"
 oc project ${GUID}-nexus
 
 # Call template to provision nexus objects
-oc new-app -f Infrastructure/templates/nexus3.yaml -p GUID=${GUID} -p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G -n ${GUID}-nexus
+oc new-app -f Infrastructure/templates/nexus3.yaml -p GUID=${GUID} -p CPU_LIMITS=1000m -p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G -n ${GUID}-nexus
 
 # Wait for nexus to start before we configure it
 while : ; do

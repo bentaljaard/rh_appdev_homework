@@ -27,7 +27,7 @@ oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-prod
 # Provision mongodb statefulset 
 oc new-app -f Infrastructure/templates/mongodb_statefulset.yaml -p GUID=bft \
 	-p REPLICAS=3 -p MONGO_DATABASE=parks -p MONGO_USER=mongodb \
-	-p VOLUME_CAPACITY=2G -p CPU_LIMITS=1000m -p MEM_LIMITS=1Gi -n ${GUID}-parks-prod
+	-p VOLUME_CAPACITY=2G -p CPU_LIMITS=500m -p MEM_LIMITS=1Gi -n ${GUID}-parks-prod
 
 # Setup deployments for applications
 # MLBParks #

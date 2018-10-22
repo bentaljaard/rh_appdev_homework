@@ -39,21 +39,16 @@ APPNAME="MLB Parks (Green)"
 
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
-# Set environment variables for db connection
+oc set resources dc/${APP}-green --limits=cpu=500m,memory=1Gi --requests=cpu=250m,memory=512Mi -n ${PROJECT}
 oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0 -n ${PROJECT}
 oc set env --from=secret/mongodb dc/${APP}-green -n ${PROJECT}
-
 oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-green dc/${APP}-green -n ${PROJECT}
-
 oc set probe dc/${APP}-green -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-green -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
-
-
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
 sleep 5
 oc set deployment-hook dc/${APP}-green -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
-
 oc label svc ${APP}-green type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
 
 
@@ -62,23 +57,16 @@ APPNAME="MLB Parks (Blue)"
 
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
-
-# Set environment variables for db connection
+oc set resources dc/${APP}-blue --limits=cpu=500m,memory=1Gi --requests=cpu=250m,memory=512Mi -n ${PROJECT}
 oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0 -n ${PROJECT}
 oc set env --from=secret/mongodb dc/${APP}-blue -n ${PROJECT}
-
 oc create configmap ${APP}-config-blue --from-literal=APPNAME="$APPNAME" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue -n ${PROJECT}
-
 oc set probe dc/${APP}-blue -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-blue -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
-
-
-# Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
 sleep 5
 oc set deployment-hook dc/${APP}-blue -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
-
 oc label svc ${APP}-blue app=${APP} --overwrite -n ${PROJECT}
 
 
@@ -90,21 +78,16 @@ PROJECT=${GUID}-parks-prod
 APPNAME="National Parks (Green)"
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
-# Set environment variables for db connection
+oc set resources dc/${APP}-green --limits=cpu=500m,memory=1Gi --requests=cpu=250m,memory=512Mi -n ${PROJECT}
 oc set env dc/${APP}-green DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0 -n ${PROJECT}
 oc set env --from=secret/mongodb dc/${APP}-green -n ${PROJECT}
-
 oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-green dc/${APP}-green -n ${PROJECT}
-
 oc set probe dc/${APP}-green -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-green -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
-
-
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
 sleep 5
 oc set deployment-hook dc/${APP}-green -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
-
 oc label svc ${APP}-green type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
 
 
@@ -114,23 +97,16 @@ APPNAME="National Parks (Blue)"
 
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
-
-# Set environment variables for db connection
+oc set resources dc/${APP}-blue --limits=cpu=500m,memory=1Gi --requests=cpu=250m,memory=512Mi -n ${PROJECT}
 oc set env dc/${APP}-blue DB_HOST=mongodb DB_PORT=27017 DB_REPLICASET=rs0 -n ${PROJECT}
 oc set env --from=secret/mongodb dc/${APP}-blue -n ${PROJECT}
-
 oc create configmap ${APP}-config-blue --from-literal=APPNAME="$APPNAME" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue -n ${PROJECT}
-
 oc set probe dc/${APP}-blue -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-blue -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
-
-
-# Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
 sleep 5
 oc set deployment-hook dc/${APP}-blue -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
-
 oc label svc ${APP}-blue app=${APP} --overwrite -n ${PROJECT}
 
 
@@ -143,11 +119,11 @@ APPNAME="ParksMap (Green)"
 
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-green --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-green --remove-all -n ${PROJECT}
+oc set resources dc/${APP}-green --limits=cpu=500m,memory=1Gi --requests=cpu=250m,memory=512Mi -n ${PROJECT}
 oc create configmap ${APP}-config-green --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-green dc/${APP}-green -n ${PROJECT}
 oc set probe dc/${APP}-green -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-green -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
-
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
 oc expose service ${APP}-green --name=${APP} -n ${PROJECT}
 
@@ -155,9 +131,9 @@ APPNAME="ParksMap (Blue)"
 
 oc new-app ${GUID}-parks-dev/${APP}:0.0-0 --name=${APP}-blue --allow-missing-imagestream-tags=true --allow-missing-images -n ${PROJECT}
 oc set triggers dc/${APP}-blue --remove-all -n ${PROJECT}
+oc set resources dc/${APP}-blue --limits=cpu=500m,memory=1Gi --requests=cpu=250m,memory=512Mi -n ${PROJECT}
 oc create configmap ${APP}-config-blue --from-literal=APPNAME="${APPNAME}" -n ${PROJECT}
 oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue -n ${PROJECT}
 oc set probe dc/${APP}-blue -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-blue -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
-
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}

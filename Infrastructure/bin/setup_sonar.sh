@@ -22,8 +22,9 @@ oc project ${GUID}-sonarqube
 # Call template to provision nexus objects
 
 ##TODO: Add more parameters
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-oc new-app -f ../templates/sonarqube.yaml -p GUID=${GUID} #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
+oc new-app -f ${DIR}/../templates/sonarqube.yaml -p GUID=${GUID} #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
 
 echo "************************"
 echo "SonarQube setup complete"

@@ -22,12 +22,12 @@ oc policy add-role-to-user edit system:serviceaccount:${GUID}-jenkins:jenkins -n
 # Add role to allow images to be pulled from dev environment
 oc policy add-role-to-group system:image-puller system:serviceaccounts:${GUID}-parks-prod -n ${GUID}-parks-dev
 # Add role to discover backend services
-oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-dev
+oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-prod
 
 # Provision mongodb statefulset 
-oc new-app -f ../templates/mongodb_statefulset.yaml -p GUID=bft \
+oc new-app -f Infrastructure/templates/mongodb_statefulset.yaml -p GUID=bft \
 	-p REPLICAS=3 -p MONGO_DATABASE=parks -p MONGO_USER=mongodb \
-	-p VOLUME_CAPACITY=2G -p CPU_LIMITS=1000m -p MEM_LIMITS=1Gi -n ${GUID}-parks-dev
+	-p VOLUME_CAPACITY=2G -p CPU_LIMITS=1000m -p MEM_LIMITS=1Gi -n ${GUID}-parks-prod
 
 # Setup deployments for applications
 # MLBParks #

@@ -51,7 +51,7 @@ oc set probe dc/${APP}-green -n ${PROJECT} --readiness --failure-threshold 3 --i
 
 
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
-oc set deployment-hook dc/${APP}-green -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-green -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
 
 oc label svc ${APP}-green type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
 
@@ -75,7 +75,7 @@ oc set probe dc/${APP}-blue -n ${PROJECT} --readiness --failure-threshold 3 --in
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
-oc set deployment-hook dc/${APP}-blue -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-blue -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
 
 oc label svc ${APP}-blue app=${APP} --overwrite -n ${PROJECT}
 
@@ -100,7 +100,7 @@ oc set probe dc/${APP}-green -n ${PROJECT} --readiness --failure-threshold 3 --i
 
 
 oc expose dc ${APP}-green --port 8080 -n ${PROJECT}
-oc set deployment-hook dc/${APP}-green -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-green -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-green -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
 
 oc label svc ${APP}-green type=parksmap-backend app=${APP} --overwrite -n ${PROJECT}
 
@@ -125,7 +125,7 @@ oc set probe dc/${APP}-blue -n ${PROJECT} --readiness --failure-threshold 3 --in
 
 # Create initial service without label (passive deployment), will need to set it in the pipeline to switch active deployment
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
-oc set deployment-hook dc/${APP}-blue -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }'):8080/ws/data/load/" 
+oc set deployment-hook dc/${APP}-blue -n ${PROJECT} --post --failure-policy=abort -- sh -c "sleep 10 && curl -i -X GET http://$(oc get service ${APP}-blue -o jsonpath='{ .spec.clusterIP }' -n ${PROJECT}):8080/ws/data/load/" 
 
 oc label svc ${APP}-blue app=${APP} --overwrite -n ${PROJECT}
 

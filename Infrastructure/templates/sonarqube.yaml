@@ -228,6 +228,8 @@ objects:
               secretKeyRef:
                 key: database-user
                 name: postgresql
+          - name: SONARQUBE_WEB_JVM_OPTS
+            value: "-Xms1024m -Xmx1024m"
           image: wkulhanek/sonarqube:6.7.4
           imagePullPolicy: IfNotPresent
           livenessProbe:

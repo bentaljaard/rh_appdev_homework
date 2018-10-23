@@ -95,3 +95,16 @@ oc expose service ${APP} -n ${PROJECT}
 # ParksMap setup complete#
 
 
+while : ; do
+  echo "Checking if MongoDB_DEV is Ready..."
+  oc get pod -n ${GUID}-parks-dev|grep mongodb|grep -v deploy|grep -v build|grep "1/1"
+  [[ "$?" == "1" ]] || break
+  echo "...no. Sleeping 10 seconds."
+  sleep 10
+done
+
+echo "****************************************"
+echo "Development Environment setup complete"
+echo "****************************************"
+
+exit 0

@@ -137,3 +137,18 @@ oc set env --from=configmap/${APP}-config-blue dc/${APP}-blue -n ${PROJECT}
 oc set probe dc/${APP}-blue -n ${PROJECT} --liveness --failure-threshold 3 --initial-delay-seconds 40 -- echo ok
 oc set probe dc/${APP}-blue -n ${PROJECT} --readiness --failure-threshold 3 --initial-delay-seconds 30 --get-url=http://:8080/ws/healthz/
 oc expose dc ${APP}-blue --port 8080 -n ${PROJECT}
+
+
+while : ; do
+  echo "Checking if MongoDB_PROD is Ready..."
+  count=$(oc get pod -n ${GUID}-parks-prod|grep mongodb|grep -v deploy|grep -v build|grep "1/1"|wc -l)
+  [[ "$count" != "3" ]] || break
+  echo "...no. Sleeping 10 seconds."
+  sleep 10
+done
+
+echo "****************************************"
+echo "Production Environment setup complete"
+echo "****************************************"
+
+exit 0

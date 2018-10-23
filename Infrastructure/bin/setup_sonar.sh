@@ -23,7 +23,7 @@ oc project ${GUID}-sonarqube
 
 ##TODO: Add more parameters
 
-oc new-app -f Infrastructure/templates/sonarqube.yaml -p GUID=${GUID} -n ${GUID}-sonarqube -p SONARQUBE_CPU_LIMITS=2000m -p DB_CPU_LIMITS=500m #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
+oc new-app -f Infrastructure/templates/sonarqube.yaml -p GUID=${GUID} -n ${GUID}-sonarqube -p SONARQUBE_CPU_LIMITS=2000m -p DB_CPU_LIMITS=1000m #-p MEM_REQUESTS=1Gi -p MEM_LIMITS=2Gi -p VOLUME_CAPACITY=2G
 
 while : ; do
   echo "Checking if Sonarqube is Ready..."

@@ -21,17 +21,23 @@ echo "Resetting Parks Production Environment in project ${GUID}-parks-prod to Gr
 
 
 # Switch MLBParks to green version
-# Remove blue version backend label
-oc label svc/mlbparks-blue type- -n ${GUID}-parks-prod
-# Add green version backend label
-oc label svc/mlbparks-green type=parksmap-backend -n ${GUID}-parks-prod --overwrite
+oc delete svc/mlbparks-blue -n ${GUID}-parks-prod
+oc expose dc/mlbparks-blue -l app=mlbparks -n ${GUID}-parks-prod --overwrite
+
+oc delete svc/mlbparks-green -n ${GUID}-parks-prod
+oc expose dc/mlbparks-green -l app=mlbparks,type=parksmap-backend -n ${GUID}-parks-prod --overwrite
+#oc label svc/mlbparks-blue type- -n ${GUID}-parks-prod
+#oc label svc/mlbparks-green type=parksmap-backend -n ${GUID}-parks-prod --overwrite
 
 
 # Switch National Parks to green version
-# Remove blue version backend label
-oc label svc/nationalparks-blue type- -n ${GUID}-parks-prod
-# Add green version backend label
-oc label svc/nationalparks-green type=parksmap-backend -n ${GUID}-parks-prod --overwrite
+oc delete svc/nationalparks-blue -n ${GUID}-parks-prod
+oc expose dc/nationalparks-blue -l app=nationalparks -n ${GUID}-parks-prod --overwrite
+
+oc delete svc/nationalparks-green -n ${GUID}-parks-prod
+oc expose dc/nationalparks-green -l app=nationalparks,type=parksmap-backend -n ${GUID}-parks-prod --overwrite
+# oc label svc/nationalparks-blue type- -n ${GUID}-parks-prod
+# oc label svc/nationalparks-green type=parksmap-backend -n ${GUID}-parks-prod --overwrite
 
 
 # Switch Parks Map to green version

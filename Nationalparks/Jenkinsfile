@@ -21,7 +21,7 @@ podTemplate(
     // Also copy "../nexus_settings.xml" to your build directory
     // and replace 'GUID' in the file with your ${GUID} to point to >your< Nexus instance
 
-     def mvnCmd = "mvn -s ./nexus_settings.xml"
+    def mvnCmd = "mvn -s ./nexus_settings.xml"
 
 
     // Checkout Source Code
@@ -133,13 +133,21 @@ podTemplate(
       stage('Switch over to new Version') {
         echo "Switching Production application to ${destApp}."
 
-        // Remove label from active service
-        sh 'oc label svc/' + activeApp + ' type- -n ${GUID}-parks-prod'
-        // Add label to destination service
-        sh 'oc label svc/' + destApp + ' type=parksmap-backend -n ${GUID}-parks-prod'
-        sh 'oc label svc/' + destApp + ' app=nationalparks --overwrite -n ${GUID}-parks-prod'
+        //Need to remove services to re-trigger parksmap to read changes
 
-        //sh 'oc patch route tasks -n bft-tasks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
+        // Remove label from active service
+        sh 'oc delete svc/' + activeApp + ' -n ${GUID}-parks-prod'
+        sh 'oc expose dc/' + activeApp + ' -l app=nationalparks -n ${GUID}-parks-prod'
+        //sh 'oc label svc/' + activeApp + ' type- -n ${GUID}-parks-prod'
+
+
+        // Add label to destination service
+        sh 'oc delete svc/' + destApp + ' -n ${GUID}-parks-prod'
+        sh 'oc expose dc/' + destApp + ' -l app=nationalparks,type=parksmap-backend --overwrite -n ${GUID}-parks-prod'
+
+        //sh 'oc label svc/' + destApp + ' type=parksmap-backend -n ${GUID}-parks-prod'
+        //sh 'oc label svc/' + destApp + ' app=nationalparks --overwrite -n ${GUID}-parks-prod'
+
       }
 
 

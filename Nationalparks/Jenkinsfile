@@ -136,17 +136,17 @@ podTemplate(
         //Need to remove services to re-trigger parksmap to read changes
 
         // Remove label from active service
-        sh 'oc delete svc/' + activeApp + ' -n ${GUID}-parks-prod'
-        sh 'oc expose dc/' + activeApp + ' -l app=nationalparks -n ${GUID}-parks-prod --port 8080'
-        //sh 'oc label svc/' + activeApp + ' type- -n ${GUID}-parks-prod'
+        //sh 'oc delete svc/' + activeApp + ' -n ${GUID}-parks-prod'
+        //sh 'oc expose dc/' + activeApp + ' -l app=nationalparks -n ${GUID}-parks-prod --port 8080'
+        sh 'oc label svc/' + activeApp + ' type- -n ${GUID}-parks-prod'
 
 
         // Add label to destination service
-        sh 'oc delete svc/' + destApp + ' -n ${GUID}-parks-prod'
-        sh 'oc expose dc/' + destApp + ' -l app=nationalparks,type=parksmap-backend -n ${GUID}-parks-prod --port 8080'
+        //sh 'oc delete svc/' + destApp + ' -n ${GUID}-parks-prod'
+        //sh 'oc expose dc/' + destApp + ' -l app=nationalparks,type=parksmap-backend -n ${GUID}-parks-prod --port 8080'
 
-        //sh 'oc label svc/' + destApp + ' type=parksmap-backend -n ${GUID}-parks-prod'
-        //sh 'oc label svc/' + destApp + ' app=nationalparks --overwrite -n ${GUID}-parks-prod'
+        sh 'oc label svc/' + destApp + ' type=parksmap-backend -n ${GUID}-parks-prod'
+        sh 'oc label svc/' + destApp + ' app=nationalparks --overwrite -n ${GUID}-parks-prod'
 
       }
 
